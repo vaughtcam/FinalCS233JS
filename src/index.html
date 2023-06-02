@@ -15,37 +15,35 @@
           <form id="zipForm">
             <div class="row">
               <div class="col center border border-2">
-                <label for="zipcode">Insert Stock Ticker</label>
+                <label for="stock">Insert Stock Ticker</label>
               </div>
 
               <div class="col-lg center border border-2">
-                <input type="input" id="zipcode" name="zipcode" value="" placeholder="Ex: IBM" required />
+                <input type="text" id="stock" name="stock" value="" placeholder="Ex: IBM" required />
               </div>
-              <button  id = "button "type="submit" class="btn btn-info"> Get Info For Your Stock!</button>
+              <button id="button " type="submit" class="btn btn-info"> Get Info For Your Stock!</button>
             </div>
           </form>
         </div>
 
-        <div id="weatherList" class="row date border border-2 border-dark" data-index="0">
-          <h2> Thursday 05/25/23 </h2>
+        <div id="weatherList" class="row date border border-2 border-dark" data-index="0" >
+          <h2> Date: <span class = "data" id = "date"></span></h2>
         </div>
         <div class="row">
-          <div class=" col border border-2" id="low">
-            Day's Low $150
-          </div>
-          <div class="col border border-2" id="high">
-            Day's High $176
-          </div>
+          
+          <div class="col border border-1 border-dark"> Day's Low: <span class="data" id ='low'></span></div>
+
+          <div class="col border border-1 border-dark"> Day's High: <span class="data" id ='high'></span></div>
         </div>
 
       </div>
 
       <div id="currentDay" class="row">
-        <div class="col border border-1 border-dark"> Ticker: <span class="data">IBM</span></div>
-        <div class="col border border-1 border-dark"> 6 Month High: <span class="data">160</span></div>
-        <div class="col border border-1 border-dark"> 6 Month Low: <span class="data">160</span> </div>
-        <div class="col border border-1 border-dark"> Current Price: <span class="data">160</span> </div>
-        <div class="col border border-1 border-dark"> Name: <span class="data">160</span> </div>
+        <div class="col border border-1 border-dark"> Ticker: <span class="data" id ='ticker'>IBM</span></div>
+        <div class="col border border-1 border-dark"> 100 Day High: <span class="data" id = "6monthHigh">160</span></div>
+        <div class="col border border-1 border-dark"> 100 Day Low: <span class="data" id = "6monthLow">160</span> </div>
+        <div class="col border border-1 border-dark"> Closing Price: <span class="data" id = "currentPrice">160</span> </div>
+        <div class="col border border-1 border-dark"> Name: <span class="data" id = "name">160</span> </div>
 
       </div>
 
@@ -53,13 +51,14 @@
     </div>
 
 
-    <div class="row">
-      <canvas id="myChart" class="bg-dark chart"></canvas>
-    
-    </div>
+
+      <canvas id="myChart" class="bg-dark chart "></canvas>
 
 
-    <!--<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.5.0/Chart.min.js"></script>-->
+    <div class="col border border-1 border-dark"> Description: <span class="data" id = "description"></span> </div>
+
+
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     </script>
   </body>
 

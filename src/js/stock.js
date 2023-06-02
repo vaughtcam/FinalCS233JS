@@ -1,5 +1,4 @@
 import 'bootstrap/dist/css/bootstrap.min.css';
-import { RuntimeGlobals } from 'webpack';
 import '../css/styles.scss';
 
 
@@ -10,11 +9,22 @@ class Stock {
     this.uiForm.addEventListener("submit", this.onFormSubmit);
     this.chart = null;
     this.createChart = this.createChart.bind(this);
+    this.inputSymbol = document.getElementById("stock");
+    this.uiSymbol = document.getElementById("ticker");
+    this.ui100dayHigh = document.getElementById('6monthHigh');
+    this.ui100dayLow = document.getElementById("6monthLow");
+    this.uicurrentPrice = document.getElementById("currentPrice");
+    this.uiName = document.getElementById('name');
+    this.uiDescription = document.getElementById('description');
+    this.uiDayLow = document.getElementById('low');
+    this.uiDayHigh = document.getElementById('high');
+    this.uiDate = document.getElementById("date");
+    
   }
 
   createChart(xValues, yValues) {
     if (this.chart != null)
-      //this.chart.destroy();
+      this.chart.destroy();
 
     this.chart = new Chart(
       "myChart", {
@@ -26,6 +36,7 @@ class Stock {
         }]
       },
 
+
       options: {
         plugins: {
           legend: {
@@ -34,8 +45,8 @@ class Stock {
 
           title: {
             display: true,
-            text: 'Stock Chart',
-            fontColor: "white",
+            text: this.symbol + " 100 Day Closing Values",
+            color: "white",
             font: {
               size: 35
             }
@@ -43,14 +54,19 @@ class Stock {
 
           tooltip: {
             titleFont: {
-              size: 100
+              size: 80,
             },
+
+            titleColor: "orange",
+
             bodyFont: {
-              size: 50
+              size: 50,
             },
-            footerFont: {
-              size: 20 // there is no footer by default
-            }
+
+            bodyColor: "orange",
+
+            displayColors: true,
+          
           }
         },
         responsive: true,
@@ -86,31 +102,27 @@ class Stock {
         },
 
         scales: {
-          responsive: true,
-          xAxes: [{
+         
+          x: {
             display: true,
             ticks: {
-              color: "orange",
-              font: {
-                color: "white",
-                size: "20"
-              }
+              color: "white",
             },
             gridLines: {
               display: false
             },
-            scaleLabel: {
+            title: {
               display: true,
               labelString: 'Month',
-              fontColor: "white"
-              
+              color: "white",
+              size: 20
+
             }
-          }],
-          yAxes: [{
+          },
+          y: {
             display: true,
             ticks: {
-              fontColor: "white",
-              beginAtZero: false
+              color: "white"
             },
             gridLines: {
               display: true,
@@ -121,7 +133,7 @@ class Stock {
               labelString: 'Price',
               fontColor: "white"
             }
-          }]
+          }
         },
 
       }
@@ -133,7 +145,9 @@ class Stock {
 
   onFormSubmit(event) {
     event.preventDefault();
-    this.symbol = "IBM";
+    this.symbol = this.inputSymbol.value
+
+    console.log(this.symbol);
     this.date = new Date;
     this.date = this.date.toISOString()
     console.log(this.date);
@@ -141,14 +155,17 @@ class Stock {
     this.endNumber = Number(this.date.slice(9, 10));
     console.log(this.endNumber);
 
-
-
     if (Number(this.date.slice(9, 10)) > 0 && Number(this.date.slice(9, 10)) <= 9) {
       this.yesterdayEndNumber = this.endNumber - 1;
       this.stringYesterdayEndNumber = this.yesterdayEndNumber.toString();
       this.yesterday = this.dateSliced.slice(0, 9) + this.stringYesterdayEndNumber;
       console.log(this.yesterday);
     }
+
+    else if ((Number(this.date.slice(8, 10)) == "00")) {
+
+    }
+
 
     else {
       this.yesterdayEndNumber = this.endNumber + 1;
@@ -166,41 +183,49 @@ class Stock {
       .then(response => response.json())
       .then(data => {
         console.log(data);
+        this.dateArray = Object.keys(data["Time Series (Daily)"]);
         this.symbol = data["Meta Data"]["2. Symbol"];
-        this.dayHigh = data["Time Series (Daily)"][this.yesterday]['2. high'];
-        this.dayLow = data["Time Series (Daily)"][this.yesterday]['3. low'];
+        this.dayHigh = data["Time Series (Daily)"][this.dateArray[0]]['2. high'];
+        this.dayLow = data["Time Series (Daily)"][this.dateArray[0]]['3. low'];
+        this.dayCurrentPrice = data["Time Series (Daily)"][this.dateArray[0]]['4. close'];
         this.a = Object.values(data["Time Series (Daily)"])
-        console.log(this.a);
         let SortedLowHighArray = [];
         let closingValueArray = [];
 
+        
+        
 
-        this.dateArray = Object.keys(data["Time Series (Daily)"])
-        console.log(this.dateArray);
 
+        
 
-        console.log(this.dataPlaceHolder);
-        console.log(this.dateArray);
         for (let i = 0; i < this.a.length; i++) {
           let b = this.a[i];
           SortedLowHighArray.push(b["2. high"]);
         }
+
         SortedLowHighArray.sort(function (a, b) { return a - b });
-        console.log(SortedLowHighArray);
         this.hundredDayHigh = SortedLowHighArray[99];
         this.hundredDayLow = SortedLowHighArray[0];
-        console.log(this.hundredDayLow);
-        console.log(this.hundredDayHigh);
-        console.log(this.dayLow);
-        console.log(this.symbol);
-        console.log(this.dayHigh);
+
 
         for (let i = 0; i < this.a.length; i++) {
           let d = this.a[i];
           closingValueArray.push(d["4. close"]);
         }
+
+        this.uiSymbol.innerHTML = this.symbol;
+        this.ui100dayHigh.innerHTML = this.hundredDayHigh;
+        this.ui100dayLow.innerHTML = this.hundredDayLow;
+        this.uicurrentPrice.innerHTML = this.dayCurrentPrice;
+        this.uiDayLow.innerHTML = this.dayLow;
+        this.uiDayHigh.innerHTML = this.dayHigh;
+        this.uiDate.innerHTML = this.dateArray[0];
+        
+        this.dateArray.reverse();
+        closingValueArray.reverse();
+       
+
         this.createChart(this.dateArray, closingValueArray);
-        console.log(closingValueArray);
       })
       .catch(error => {
         alert('There was a problem getting stock information!')
@@ -212,10 +237,16 @@ class Stock {
       .then(data => {
         this.name = data.Name;
         this.description = data.Description;
-        console.log(this.description);
-        console.log(this.name);
-        console.log(data)
+
+        this.uiName.innerHTML = this.name;
+        this.uiDescription.innerHTML = this.description;
+        
+        //console.log(this.description);
+        //console.log(this.name);
+        //console.log(data)
       })
+
+
 
       .catch(error => {
         alert('There was a problem getting company information!')
